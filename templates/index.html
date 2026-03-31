@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Errllama</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:         #0e0c0a;
+      --bg2:        #161310;
+      --bg3:        #1f1a15;
+      --border:     #2e261d;
+      --amber:      #d4882a;
+      --amber-dim:  #8a5a1a;
+      --amber-glow: #f0a84050;
+      --cream:      #e8dcc8;
+      --muted:      #6b5c47;
+      --error:      #c0392b;
+      --mono:       'IBM Plex Mono', monospace;
+      --serif:      'Playfair Display', Georgia, serif;
+
+      /* eInk skin overrides */
+      --eink-bg:     #f0ece4;
+      --eink-bg2:    #e8e4dc;
+      --eink-bg3:    #dedad2;
+      --eink-border: #c8c0b0;
+      --eink-text:   #1a1814;
+      --eink-muted:  #7a7060;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; background: var(--bg); color: var(--cream);
+      font-family: var(--mono); font-size: 14px; line-height: 1.7; }
+
+    /* ── eInk theme ── */
+    body.eink {
+      --bg: var(--eink-bg); --bg2: var(--eink-bg2); --bg3: var(--eink-bg3);
+      --border: var(--eink-border); --cream: var(--eink-text); --muted: var(--eink-muted);
+      --amber: #5a4a2a; --amber-dim: #7a6a3a; --amber-glow: transparent;
+      filter: grayscale(0.85) contrast(1.05);
+    }
+
+    /* ── Layout ── */
+    .shell { display: flex; height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 220px; flex-shrink: 0; background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 18px 16px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .wordmark {
+      font-family: var(--serif); font-size: 1.3rem; font-weight: 700;
+      color: var(--amber); letter-spacing: -0.3px;
+      text-shadow: 0 0 20px var(--amber-glow);
+    }
+
+    .user-line {
+      font-size: 10px; color: var(--muted); margin-top: 3px;
+      letter-spacing: 0.06em;
+    }
+
+    .btn-new {
+      margin: 10px 12px 0;
+      background: var(--amber); border: none; color: var(--bg);
+      font-family: var(--mono); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.08em; padding: 8px 12px; border-radius: 3px;
+      cursor: pointer; width: calc(100% - 24px); transition: background 0.2s;
+    }
+    .btn-new:hover { background: #e09930; }
+
+    .conv-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .conv-list::-webkit-scrollbar { width: 3px; }
+    .conv-list::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .conv-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 14px; cursor: pointer; border-radius: 0;
+      transition: background 0.15s; gap: 6px;
+    }
+    .conv-item:hover { background: var(--bg3); }
+    .conv-item.active { background: var(--bg3); border-left: 2px solid var(--amber); }
+
+    .conv-title {
+      font-size: 11px; color: var(--cream); flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      opacity: 0.8;
+    }
+    .conv-item.active .conv-title { opacity: 1; }
+
+    .conv-del {
+      font-size: 14px; color: var(--muted); background: none; border: none;
+      cursor: pointer; padding: 0 2px; line-height: 1; flex-shrink: 0;
+      opacity: 0; transition: opacity 0.15s, color 0.15s;
+    }
+    .conv-item:hover .conv-del { opacity: 1; }
+    .conv-del:hover { color: var(--error); }
+
+    .sidebar-footer {
+      padding: 10px 12px; border-top: 1px solid var(--border);
+      display: flex; gap: 6px;
+    }
+
+    .btn-sm {
+      flex: 1; background: transparent; border: 1px solid var(--border);
+      color: var(--muted); font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.05em; padding: 6px 4px; border-radius: 3px;
+      cursor: pointer; transition: all 0.2s; text-align: center;
+    }
+    .btn-sm:hover { border-color: var(--amber-dim); color: var(--amber); }
+    .btn-sm.active { border-color: var(--amber-dim); color: var(--amber); }
+
+    /* ── Main panel ── */
+    .main {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+      max-width: 860px;
+    }
+
+    /* ── Chat header ── */
+    .chat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; border-bottom: 1px solid var(--border);
+      background: var(--bg2); flex-shrink: 0;
+    }
+
+    .chat-title {
+      font-size: 12px; color: var(--muted); letter-spacing: 0.04em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 400px;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 10px; }
+
+    select {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); font-family: var(--mono); font-size: 11px;
+      padding: 4px 8px; border-radius: 3px; cursor: pointer; outline: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    select:hover { border-color: var(--amber-dim); color: var(--cream); }
+
+    .status { display: flex; align-items: center; gap: 5px;
+      font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
+    .dot.live { background: #5cb85c; box-shadow: 0 0 6px #5cb85c80; }
+    .dot.thinking { background: var(--amber); animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    /* ── Messages ── */
+    .messages { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .message {
+      display: flex; padding: 20px 24px;
+      border-bottom: 1px solid var(--border); animation: fadein 0.2s ease;
+    }
+    @keyframes fadein { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+
+    .message.user  { background: var(--bg2); }
+    .message.ai    { background: var(--bg); }
+    .message.error { background: #1a0a09; }
+
+    .message-role {
+      width: 64px; flex-shrink: 0; font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase; padding-top: 2px;
+    }
+    .message.user  .message-role { color: var(--amber); }
+    .message.ai    .message-role { color: var(--muted); }
+    .message.error .message-role { color: var(--error); }
+
+    .message-content { flex: 1; white-space: pre-wrap; word-break: break-word; }
+    .message.ai    .message-content { color: #cdc0ad; }
+    .message.error .message-content { color: #e07070; font-style: italic; }
+
+    .cursor {
+      display: inline-block; width: 8px; height: 14px;
+      background: var(--amber); margin-left: 2px; vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; height: 100%; gap: 10px;
+      color: var(--muted); user-select: none;
+    }
+    .empty-state pre { font-size: 11px; color: var(--border); line-height: 1.3; }
+    .empty-state p { font-family: var(--serif); font-style: italic;
+      font-size: 1rem; color: var(--amber-dim); }
+
+    /* ── Input ── */
+    .input-area {
+      border-top: 1px solid var(--border); background: var(--bg2);
+      padding: 14px 24px 18px; flex-shrink: 0;
+    }
+    .input-row { display: flex; gap: 8px; align-items: flex-end; }
+
+    textarea {
+      flex: 1; background: var(--bg3); border: 1px solid var(--border);
+      color: var(--cream); font-family: var(--mono); font-size: 13.5px;
+      line-height: 1.6; padding: 10px 14px; border-radius: 4px;
+      resize: none; outline: none; min-height: 44px; max-height: 160px;
+      transition: border-color 0.2s;
+    }
+    textarea::placeholder { color: var(--muted); }
+    textarea:focus { border-color: var(--amber-dim); }
+
+    .btn-send {
+      background: var(--amber); border: none; color: var(--bg);
+      font-family: var(--mono); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.08em; padding: 10px 16px; border-radius: 4px;
+      cursor: pointer; height: 44px; flex-shrink: 0; transition: background 0.2s, opacity 0.2s;
+    }
+    .btn-send:hover { background: #e09930; }
+    .btn-send:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .input-hint { margin-top: 6px; font-size: 10px; color: var(--muted); letter-spacing: 0.04em; }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="wordmark">Errllama</div>
+      <div class="user-line">{{ username }}</div>
+    </div>
+    <button class="btn-new" onclick="startNewChat()">+ new chat</button>
+
+    <div class="conv-list" id="convList">
+      {% for conv in conversations %}
+      <div class="conv-item" id="conv-{{ conv.id }}" onclick="loadConversation({{ conv.id }})">
+        <div class="conv-title">{{ conv.title }}</div>
+        <button class="conv-del" onclick="deleteConversation(event, {{ conv.id }})" title="delete">×</button>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn-sm" id="einkBtn" onclick="toggleEink()">eink</button>
+      <a href="/logout" style="flex:1; text-decoration:none;">
+        <button class="btn-sm" style="width:100%;">logout</button>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="chat-header">
+      <div class="chat-title" id="chatTitle">select a conversation or start a new one</div>
+      <div class="header-right">
+        <div class="status">
+          <div class="dot live" id="statusDot"></div>
+          <span id="statusText">ready</span>
+        </div>
+        <select id="modelSelect">
+          {% for m in models %}
+          <option value="{{ m }}" {% if m == default_model %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="empty-state" id="emptyState">
+        <pre>
+  /\   /\
+ (  o o  )
+ =( Y )=
+   )   (
+  (_)-(_)</pre>
+        <p>What's on your mind?</p>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-row">
+        <textarea id="input" placeholder="Ask anything..." rows="1" autofocus></textarea>
+        <button class="btn-send" id="sendBtn" onclick="sendMessage()">send</button>
+      </div>
+      <div class="input-hint">shift+enter for newline &nbsp;·&nbsp; enter to send</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const messagesEl  = document.getElementById('messages');
+  const inputEl     = document.getElementById('input');
+  const sendBtn     = document.getElementById('sendBtn');
+  const statusDot   = document.getElementById('statusDot');
+  const statusText  = document.getElementById('statusText');
+  const modelSelect = document.getElementById('modelSelect');
+  const chatTitle   = document.getElementById('chatTitle');
+  const convList    = document.getElementById('convList');
+
+  let currentConvId = null;
+
+  // ── eInk toggle ──
+  const einkBtn = document.getElementById('einkBtn');
+  if (localStorage.getItem('eink') === '1') {
+    document.body.classList.add('eink');
+    einkBtn.classList.add('active');
+  }
+  function toggleEink() {
+    const on = document.body.classList.toggle('eink');
+    localStorage.setItem('eink', on ? '1' : '0');
+    einkBtn.classList.toggle('active', on);
+  }
+
+  // ── Auto-grow textarea ──
+  inputEl.addEventListener('input', () => {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + 'px';
+  });
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+
+  function setStatus(state) {
+    statusDot.className = 'dot ' + state;
+    statusText.textContent = state === 'live' ? 'ready' : state === 'thinking' ? 'thinking...' : 'error';
+  }
+
+  function removeEmptyState() {
+    const es = document.getElementById('emptyState');
+    if (es) es.remove();
+  }
+
+  function addMessage(role, content = '') {
+    removeEmptyState();
+    const div = document.createElement('div');
+    div.className = 'message ' + (role === 'user' ? 'user' : role === 'error' ? 'error' : 'ai');
+    div.innerHTML = `
+      <div class="message-role">${role === 'user' ? 'you' : role === 'error' ? 'error' : 'llama'}</div>
+      <div class="message-content">${escapeHtml(content)}</div>`;
+    messagesEl.appendChild(div);
+    scrollBottom();
+    return div.querySelector('.message-content');
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+  // ── Sidebar helpers ──
+  function setActiveConv(id) {
+    document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('conv-' + id);
+    if (el) el.classList.add('active');
+  }
+
+  function prependConvToSidebar(id, title) {
+    const existing = document.getElementById('conv-' + id);
+    if (existing) { existing.querySelector('.conv-title').textContent = title; return; }
+    const div = document.createElement('div');
+    div.className = 'conv-item active';
+    div.id = 'conv-' + id;
+    div.setAttribute('onclick', `loadConversation(${id})`);
+    div.innerHTML = `
+      <div class="conv-title">${escapeHtml(title)}</div>
+      <button class="conv-del" onclick="deleteConversation(event, ${id})" title="delete">×</button>`;
+    convList.prepend(div);
+  }
+
+  // ── New chat ──
+  function startNewChat() {
+    currentConvId = null;
+    messagesEl.innerHTML = `
+      <div class="empty-state" id="emptyState">
+        <pre>
+  /\\   /\\
+ (  o o  )
+ =( Y )=
+   )   (
+  (_)-(_)</pre>
+        <p>What's on your mind?</p>
+      </div>`;
+    chatTitle.textContent = 'new conversation';
+    document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+    inputEl.focus();
+  }
+
+  // ── Load past conversation ──
+  async function loadConversation(id) {
+    const res  = await fetch('/conversation/' + id);
+    const data = await res.json();
+    if (data.error) return;
+
+    currentConvId = data.id;
+    modelSelect.value = data.model || modelSelect.value;
+    chatTitle.textContent = data.title;
+    setActiveConv(id);
+
+    messagesEl.innerHTML = '';
+    if (!data.messages.length) {
+      messagesEl.innerHTML = `<div class="empty-state" id="emptyState">
+        <pre>
+  /\\   /\\
+ (  o o  )
+ =( Y )=
+   )   (
+  (_)-(_)</pre><p>What's on your mind?</p></div>`;
+    } else {
+      data.messages.forEach(m => addMessage(m.role, m.content));
+    }
+    inputEl.focus();
+  }
+
+  // ── Delete conversation ──
+  async function deleteConversation(e, id) {
+    e.stopPropagation();
+    await fetch('/conversation/' + id + '/delete', { method: 'POST' });
+    const el = document.getElementById('conv-' + id);
+    if (el) el.remove();
+    if (currentConvId === id) startNewChat();
+  }
+
+  // ── Send message ──
+  async function sendMessage() {
+    const text = inputEl.value.trim();
+    if (!text || sendBtn.disabled) return;
+
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    sendBtn.disabled = true;
+    setStatus('thinking');
+
+    addMessage('user', text);
+    const aiContent = addMessage('ai');
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    aiContent.appendChild(cursor);
+
+    let buffer = '';
+
+    try {
+      const resp = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          model: modelSelect.value,
+          conversation_id: currentConvId
+        })
+      });
+
+      const reader  = resp.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const lines = decoder.decode(value).split('\n');
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = JSON.parse(line.slice(6));
+
+          // First event: set conversation ID and update sidebar
+          if (data.conv_id && !data.done && !data.token) {
+            currentConvId = data.conv_id;
+            if (data.is_new) {
+              const title = text.slice(0, 45) + (text.length > 45 ? '…' : '');
+              chatTitle.textContent = title;
+              prependConvToSidebar(data.conv_id, title);
+              setActiveConv(data.conv_id);
+            }
+          }
+
+          if (data.token) {
+            buffer += data.token;
+            aiContent.textContent = buffer;
+            aiContent.appendChild(cursor);
+            scrollBottom();
+          }
+
+          if (data.done) {
+            cursor.remove();
+            setStatus('live');
+            sendBtn.disabled = false;
+            inputEl.focus();
+          }
+
+          if (data.error) {
+            cursor.remove();
+            aiContent.parentElement.className = 'message error';
+            aiContent.parentElement.querySelector('.message-role').textContent = 'error';
+            aiContent.textContent = data.error;
+            setStatus('error');
+            sendBtn.disabled = false;
+            inputEl.focus();
+          }
+        }
+      }
+    } catch (err) {
+      cursor.remove();
+      aiContent.textContent = 'Connection failed. Is Ollama running?';
+      aiContent.parentElement.className = 'message error';
+      setStatus('error');
+      sendBtn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
