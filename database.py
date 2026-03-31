@@ -173,3 +173,20 @@ def get_messages(conv_id):
     ).fetchall()
     conn.close()
     return [{'role': r['role'], 'content': r['content']} for r in rows]
+
+
+def init_contact_table():
+    """Add contact_messages table if it doesn't exist."""
+    conn = get_db()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS contact_messages (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            username   TEXT,
+            subject    TEXT,
+            message    TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            resolved   INTEGER DEFAULT 0
+        )
+    ''')
+    conn.commit()
+    conn.close()

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Errllama — Privacy Policy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0c0a; --bg2: #161310; --bg3: #1f1a15;
+      --border: #2e261d; --amber: #d4882a; --amber-dim: #8a5a1a;
+      --amber-glow: #f0a84040; --cream: #e8dcc8; --muted: #6b5c47;
+      --mono: 'IBM Plex Mono', monospace; --serif: 'Playfair Display', Georgia, serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--cream);
+      font-family: var(--mono); font-size: 14px; line-height: 1.8;
+      padding: 60px 24px;
+    }
+    .wrap { max-width: 680px; margin: 0 auto; }
+    .back {
+      display: inline-block; color: var(--muted); text-decoration: none;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 40px; transition: color 0.2s;
+    }
+    .back:hover { color: var(--amber); }
+    .wordmark {
+      font-family: var(--serif); font-size: 2rem; font-weight: 700;
+      color: var(--amber); margin-bottom: 6px;
+      text-shadow: 0 0 30px var(--amber-glow);
+    }
+    .subtitle {
+      font-size: 11px; color: var(--muted); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 48px;
+    }
+    h2 {
+      font-family: var(--serif); font-size: 1.1rem; color: var(--amber);
+      font-weight: 700; margin: 36px 0 12px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    p { color: #cdc0ad; margin-bottom: 16px; }
+    ul { color: #cdc0ad; margin: 0 0 16px 20px; }
+    ul li { margin-bottom: 6px; }
+    .updated {
+      font-size: 11px; color: var(--muted); margin-top: 48px;
+      padding-top: 20px; border-top: 1px solid var(--border);
+    }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="/">← back to errllama</a>
+    <div class="wordmark">Errllama</div>
+    <div class="subtitle">Privacy Policy</div>
+
+    <p>Errllama is a self-hosted AI chat service operated by <strong>Errldabbin</strong>. This policy explains what data is collected, how it is used, and your rights as a user.</p>
+
+    <h2>What We Collect</h2>
+    <ul>
+      <li><strong>Username</strong> — chosen by you at registration</li>
+      <li><strong>Password</strong> — stored as a one-way hash, never in plain text</li>
+      <li><strong>Chat history</strong> — your conversations with Errllama, stored privately on our server</li>
+      <li><strong>Timestamps</strong> — when conversations were created and updated</li>
+    </ul>
+    <p>We do not collect email addresses, real names, payment information, or any identifying information beyond your chosen username.</p>
+
+    <h2>How We Use Your Data</h2>
+    <ul>
+      <li>To provide the Errllama chat service</li>
+      <li>To save and display your conversation history</li>
+      <li>To authenticate you when you log in</li>
+    </ul>
+    <p>Your data is never sold, shared with third parties, or used for advertising.</p>
+
+    <h2>Where Your Data Lives</h2>
+    <p>All data is stored in a private database on a self-hosted server. Conversations are processed locally by an AI model running on the same server — your messages are never sent to OpenAI, Google, Anthropic, or any external AI provider.</p>
+    <p>Web traffic is routed through <a href="https://cloudflare.com" target="_blank">Cloudflare</a> for security and performance. Cloudflare may log connection metadata such as IP addresses per their own privacy policy.</p>
+
+    <h2>Data Retention</h2>
+    <p>Your account and conversation history are retained until you delete them or request deletion. You can delete individual conversations from within the app at any time.</p>
+
+    <h2>Your Rights</h2>
+    <ul>
+      <li>You can delete any conversation at any time from within the app</li>
+      <li>You can request full deletion of your account and all associated data</li>
+      <li>You can request a copy of your data</li>
+    </ul>
+    <p>To exercise any of these rights, use the <a href="/contact">contact form</a>.</p>
+
+    <h2>Security</h2>
+    <p>Passwords are hashed using industry-standard algorithms before storage. All connections are encrypted via HTTPS. We take reasonable precautions to protect your data, though no system is perfectly secure.</p>
+
+    <h2>Children</h2>
+    <p>Errllama is not intended for users under the age of 13. We do not knowingly collect data from children.</p>
+
+    <h2>Changes to This Policy</h2>
+    <p>If this policy changes materially, we will update the date below. Continued use of the service constitutes acceptance of the updated policy.</p>
+
+    <h2>Contact</h2>
+    <p>Questions or requests regarding your data can be submitted via the <a href="/contact">contact form</a>.</p>
+
+    <div class="updated">Last updated: March 31, 2026 &nbsp;·&nbsp; Operated by Errldabbin</div>
+  </div>
+</body>
+</html>
