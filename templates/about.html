@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Errllama — About</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0c0a; --bg2: #161310; --bg3: #1f1a15;
+      --border: #2e261d; --amber: #d4882a; --amber-dim: #8a5a1a;
+      --amber-glow: #f0a84040; --cream: #e8dcc8; --muted: #6b5c47;
+      --mono: 'IBM Plex Mono', monospace; --serif: 'Playfair Display', Georgia, serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--cream); font-family: var(--mono); font-size: 14px; line-height: 1.8; padding: 60px 24px; }
+    .wrap { max-width: 680px; margin: 0 auto; }
+    .back { display: inline-block; color: var(--muted); text-decoration: none; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 40px; transition: color 0.2s; }
+    .back:hover { color: var(--amber); }
+    .wordmark { font-family: var(--serif); font-size: 2rem; font-weight: 700; color: var(--amber); margin-bottom: 6px; text-shadow: 0 0 30px var(--amber-glow); }
+    .tagline { font-family: var(--serif); font-style: italic; font-size: 1.1rem; color: var(--cream); opacity: 0.7; margin-bottom: 48px; }
+    h2 { font-family: var(--serif); font-size: 1.1rem; color: var(--amber); font-weight: 700; margin: 36px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    p { color: #cdc0ad; margin-bottom: 16px; }
+    .stat-row { display: flex; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+    .stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 16px 20px; flex: 1; min-width: 140px; }
+    .stat-value { font-family: var(--serif); font-size: 1.4rem; color: var(--amber); font-weight: 700; }
+    .stat-label { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+    .donate-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 20px 24px; margin: 24px 0; }
+    .donate-box p { margin-bottom: 12px; }
+    .donate-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .donate-label { color: var(--muted); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; width: 60px; flex-shrink: 0; }
+    .donate-value { color: var(--amber); word-break: break-all; font-size: 12px; }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .footer-links { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px; color: var(--muted); }
+    .footer-links a { color: var(--muted); }
+    .footer-links a:hover { color: var(--amber); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="/">← back to errllama</a>
+    <div class="wordmark">Errllama</div>
+    <div class="tagline">Errl's water free, data center free, local helper.</div>
+    <h2>What is this?</h2>
+    <p>Errllama is a self-hosted AI chat running on a repurposed gaming computer in rural Oregon. No data centers. No cloud. No water-cooled server farms. Just a machine in someone's house, running open source AI models locally, serving anyone who finds their way here.</p>
+    <p>It's an experiment in what personal computing can look like — useful, private, and unplugged from the infrastructure most AI depends on.</p>
+    <h2>Why does it exist?</h2>
+    <p>Large AI services consume enormous amounts of electricity and water. A single data center can use millions of gallons of water per day for cooling. Errllama uses none. The hardware was already built. The electricity is minimal. The model runs locally and your conversations never leave this machine.</p>
+    <p>This started as a learning project and turned into something people actually use. That's pretty wild.</p>
+    <h2>The hardware</h2>
+    <div class="stat-row">
+      <div class="stat"><div class="stat-value">32GB</div><div class="stat-label">RAM</div></div>
+      <div class="stat"><div class="stat-value">i7</div><div class="stat-label">Processor</div></div>
+      <div class="stat"><div class="stat-value">0</div><div class="stat-label">Gallons of water used</div></div>
+      <div class="stat"><div class="stat-value">~50W</div><div class="stat-label">Power draw</div></div>
+    </div>
+    <p>A repurposed gaming PC running Linux, Ollama, and open source Llama models. Built and maintained by one person in La Pine, Oregon.</p>
+    <h2>Who built this?</h2>
+    <p>Errldabbin — artist, tinkerer, CS student. This project is part portfolio piece, part genuine experiment in self-hosted AI. The code is open source on <a href="https://github.com/christophereedavis-cmyk/errllama" target="_blank">GitHub</a>.</p>
+    <h2>Support the experiment</h2>
+    <div class="donate-box">
+      <p>Errllama is free to use. If it's been useful to you, you're welcome to throw something toward the electricity bill.</p>
+      <div class="donate-item"><span class="donate-label">CashApp</span><span class="donate-value">$ErrlDabbinOG</span></div>
+      <div class="donate-item"><span class="donate-label">Bitcoin</span><span class="donate-value">bc1qzw3aac8tshxqpehth96ml7pdag7za085j6pcvw</span></div>
+    </div>
+    <div class="footer-links">
+      <a href="/privacy">privacy policy</a>
+      <a href="/contact">contact</a>
+      <a href="https://github.com/christophereedavis-cmyk/errllama" target="_blank">github</a>
+      <a href="/">← back to chat</a>
+    </div>
+  </div>
+</body>
+</html>

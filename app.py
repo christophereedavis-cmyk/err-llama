@@ -204,5 +204,10 @@ def contact():
     return render_template('contact.html')
 
 
-if __name__ == '__main__':
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+if __name__ == "__main__":
     app.run(debug=False, host='0.0.0.0', port=5001)

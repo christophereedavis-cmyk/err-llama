@@ -15,7 +15,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       min-height: 100vh; background: var(--bg); color: var(--cream);
-      font-family: var(--mono); display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
     .card {
       width: 100%; max-width: 380px; padding: 40px;
@@ -86,5 +86,12 @@
       No account? <a href="/register">create one</a>
     </div>
   </div>
+<div style="margin-top:24px; text-align:center; font-size:10px; color:var(--muted); line-height:2;">
+      <a href="/about" style="color:var(--muted); text-decoration:none;">about</a>
+      &nbsp;·&nbsp;
+      <a href="/privacy" style="color:var(--muted); text-decoration:none;">privacy</a>
+      &nbsp;·&nbsp;
+      <a href="/contact" style="color:var(--muted); text-decoration:none;">contact</a>
+    </div>
 </body>
 </html>
