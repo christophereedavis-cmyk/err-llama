@@ -5,10 +5,17 @@ from functools import wraps
 import requests
 import json
 import database as db
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
 app.secret_key = 'errllama-change-this-to-something-random-in-production'
-
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["60 per minute"],
+    storage_uri="memory://"
+)
 OLLAMA_URL       = 'http://localhost:11434/api/chat'
 AVAILABLE_MODELS = ['llama3.1:8b', 'llama3.1:70b']
 DEFAULT_MODEL    = 'llama3.1:8b'
@@ -32,6 +39,7 @@ def login_required(f):
 
 
 @app.route('/register', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
 def register():
     if 'user_id' in session:
         return redirect(url_for('index'))
@@ -56,6 +64,9 @@ def register():
 
 
 @app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
+
 def login():
     if 'user_id' in session:
         return redirect(url_for('index'))
@@ -172,6 +183,7 @@ def chat():
             yield f"data: {json.dumps({'error': 'Cannot connect to Ollama.'})}\n\n"
         except Exception as e:
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
+    return Response(stream_with_context(generate()), mimetype='text/event-stream')
 
 
 
